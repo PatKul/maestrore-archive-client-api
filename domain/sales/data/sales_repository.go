@@ -120,6 +120,12 @@ func (repository *SalesRepository) FindPagedResult(query *dto.QueryPayload) ([]S
 	return sales, nil
 }
 
+/**
+ * Find sales by id
+ * @param id string
+ * @return SalesDetailData
+ * @return error
+ */
 func (repository *SalesRepository) FindById(id string) (SalesDetailData, error) {
 	var sales SalesDetailData
 
