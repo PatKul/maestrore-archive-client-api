@@ -3,7 +3,7 @@
 The project is developed to enable Wave2 Systems clients upgrading from earlier versions of
 our cloud ERP, query historical sales.
 
-I have open-sourced it for anyone who want to make forks of the project for educational
+I have open-sourced it for anyone who wants to fork of the project for educational
 or commercial purposes.
 
 ## Installation
