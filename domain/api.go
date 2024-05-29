@@ -43,15 +43,15 @@ func (srv *APIService) Init() error {
 	return nil
 }
 
+/**
+ * Run the API service, start listening for requests
+ */
 func (srv *APIService) Run() {
 	defer srv.database.Close()
 
 	router := http.NewServeMux()
 
 	// route handling
-	defaultRouteHandler := NewDefaultRouteHandler(router, srv.encryptor)
-	defaultRouteHandler.RegisterRoute()
-
 	locationRouteHandler := location.NewRouteHandler(router, srv.database.GetConnection())
 	locationRouteHandler.RegisterRoute()
 

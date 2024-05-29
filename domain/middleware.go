@@ -2,6 +2,11 @@ package domain
 
 import "net/http"
 
+/**
+ * Middleware to handle CORS
+ * @param next http.Handler
+ * @return http.Handler
+ */
 func CorsMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Add CORS headers

@@ -10,7 +10,7 @@ import (
 
 type SalesRepository struct {
 	db      *sql.DB
-	encoder *SalesEncoder
+	encoder *SalesDataEncoder
 }
 
 func NewSalesRepository(db *sql.DB) *SalesRepository {

@@ -8,6 +8,7 @@ import (
 
 type SalesService struct {
 	repository *data.SalesRepository
+	encoder    *SalesDtoEncoder
 }
 
 func NewSalesService(repository *data.SalesRepository) *SalesService {
@@ -31,24 +32,12 @@ func (s *SalesService) FindPagedSales(query *dto.QueryPayload) (*httpclient.Http
 		return nil, error
 	}
 
-	var list []dto.SalesListDto = []dto.SalesListDto{}
-	for _, sale := range sales {
-		list = append(list, dto.SalesListDto{
-			Id:                    sale.Id,
-			LocationTransactionId: sale.LocationTransactionId,
-			LocationName:          sale.LocationName,
-			TillNumber:            sale.TillNumber,
-			SalesDate:             sale.SalesDate,
-			NetAmount:             sale.NetAmount,
-			AmountPaid:            sale.AmountPaid,
-			CommissionDue:         sale.CommissionDue,
-		})
-	}
+	var list = s.encoder.EncodeListData(&sales)
 
 	return &httpclient.HttpPaginatedDto[dto.SalesListDto]{
 		Page:   query.Page,
 		Limit:  query.Limit,
-		Result: list,
+		Result: *list,
 		Total:  count,
 	}, nil
 }
@@ -65,50 +54,8 @@ func (s *SalesService) FindById(id string) (dto.SalesDetailDto, error) {
 		return dto.SalesDetailDto{}, error
 	}
 
-	var entries []dto.SalesDetailEntryDto = []dto.SalesDetailEntryDto{}
-	for _, entry := range sale.Entries {
-		comment := ""
-		if entry.Comment.Valid {
-			comment = entry.Comment.String
-		}
+	dto := s.encoder.EncodeDetailData(&sale)
 
-		entries = append(entries, dto.SalesDetailEntryDto{
-			Id:              entry.Id,
-			InventoryId:     entry.InventoryId,
-			InventoryName:   entry.InventoryName,
-			Comment:         comment,
-			Quantity:        entry.Quantity,
-			CostPrice:       entry.CostPrice,
-			SalesPrice:      entry.SalesPrice,
-			TotalCostPrice:  entry.TotalCostPrice,
-			TotalSalesPrice: entry.TotalSalesPrice,
-		})
-	}
+	return *dto, nil
 
-	var tenders []dto.SalesDetailTenderEntryDto = []dto.SalesDetailTenderEntryDto{}
-	for _, tender := range sale.Tenders {
-		tenders = append(tenders, dto.SalesDetailTenderEntryDto{
-			Id:         tender.Id,
-			TenderName: tender.TenderName,
-			Amount:     tender.Amount,
-		})
-	}
-
-	note := ""
-	if sale.Note.Valid {
-		note = sale.Note.String
-	}
-	return dto.SalesDetailDto{
-		Id:                    sale.Id,
-		LocationTransactionId: sale.LocationTransactionId,
-		LocationName:          sale.LocationName,
-		TillNumber:            sale.TillNumber,
-		SalesDate:             sale.SalesDate,
-		NetAmount:             sale.NetAmount,
-		AmountPaid:            sale.AmountPaid,
-		CommissionDue:         sale.CommissionDue,
-		Note:                  note,
-		Entries:               entries,
-		Tenders:               tenders,
-	}, nil
 }
