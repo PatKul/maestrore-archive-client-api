@@ -6,12 +6,6 @@ our cloud ERP, query historical sales.
 I have open-sourced it for anyone who want to make forks of the project for educational
 or commercial purposes.
 
-## Table of Contents
-
-- [Installation](#installation)
-- [Contributing](#contributing)
-- [License](#license)
-
 ## Installation
 
 Requirements:
