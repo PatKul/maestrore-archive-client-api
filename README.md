@@ -1,7 +1,7 @@
 # Maestore Archive - Sales Query Api
 
 The project is developed to enable Wave2 Systems clients upgrading from earlier versions of
-our cloud ERP, query historical sales.
+our cloud ERP to query historical sales.
 
 I have open-sourced it for anyone who wants to fork of the project for educational
 or commercial purposes.
