@@ -1,4 +1,4 @@
-# Project Name
+# Maestore Archive - Sales Query Api
 
 The project is developed to enable Wave2 Systems clients upgrading from earlier versions of
 our cloud ERP, query historical sales.
