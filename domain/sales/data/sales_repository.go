@@ -8,6 +8,8 @@ import (
 	"maestrore/domain/sales/dto"
 )
 
+const TRANSACTION_TYPE_SALES = "S"
+
 type SalesRepository struct {
 	db      *sql.DB
 	encoder *SalesDataEncoder
@@ -29,12 +31,11 @@ func NewSalesRepository(db *sql.DB) *SalesRepository {
  * @return error
  */
 func (r *SalesRepository) Count(query *dto.QueryPayload) (int, error) {
-	creteria := r.encoder.EncodeQuery(query)
+	criteria := r.encoder.EncodeQuery(query)
 
 	whereClause := ""
-
-	if creteria != "" {
-		whereClause = "WHERE " + creteria
+	if criteria != "" {
+		whereClause = "WHERE " + criteria
 	}
 
 	var count int
@@ -68,6 +69,8 @@ func (repository *SalesRepository) FindPagedResult(query *dto.QueryPayload) ([]S
 		whereClause = "WHERE " + creteria
 	}
 
+	orderByClause := repository.encoder.EncodeSortBy(query.SortBy, query.OrderBy)
+
 	limitStr := strconv.Itoa(query.Limit)
 	offsetStr := strconv.Itoa((query.Page - 1) * query.Limit)
 
@@ -75,6 +78,7 @@ func (repository *SalesRepository) FindPagedResult(query *dto.QueryPayload) ([]S
 		"s.id, "+
 		"s.location_transaction_id,"+
 		"loc.name,"+
+		"s.sales_date,"+
 		"s.consumer_id,"+
 		"s.till_number,"+
 		"s.net_amount,"+
@@ -83,8 +87,8 @@ func (repository *SalesRepository) FindPagedResult(query *dto.QueryPayload) ([]S
 		"s.note "+
 		"FROM sales s LEFT JOIN locations loc ON loc.id = s.location_id "+
 		"LEFT JOIN sales_entries se ON se.sales_id = s.id "+
-		whereClause+
-		" ORDER BY s.sales_date ASC "+
+		whereClause+" "+
+		orderByClause+" "+
 		"LIMIT %s OFFSET %s", limitStr, offsetStr)
 
 	salesRows, error := repository.db.Query(sql)
@@ -103,6 +107,7 @@ func (repository *SalesRepository) FindPagedResult(query *dto.QueryPayload) ([]S
 			&sale.Id,
 			&sale.LocationTransactionId,
 			&sale.LocationName,
+			&sale.SalesDate,
 			&sale.CustomerId,
 			&sale.TillNumber,
 			&sale.NetAmount,
@@ -133,6 +138,7 @@ func (repository *SalesRepository) FindById(id string) (SalesDetailData, error) 
 		"s.id, "+
 		"s.location_transaction_id,"+
 		"loc.name,"+
+		"s.sales_date,"+
 		"s.consumer_id,"+
 		"s.till_number,"+
 		"s.net_amount,"+
@@ -145,6 +151,7 @@ func (repository *SalesRepository) FindById(id string) (SalesDetailData, error) 
 			&sales.Id,
 			&sales.LocationTransactionId,
 			&sales.LocationName,
+			&sales.SalesDate,
 			&sales.CustomerId,
 			&sales.TillNumber,
 			&sales.NetAmount,
@@ -222,6 +229,12 @@ func (repository *SalesRepository) GetEntries(salesId string) ([]SalesDetailEntr
 	return salesEntries, nil
 }
 
+/**
+ * Get sales tenders under a given sales id
+ * @param salesId int
+ * @return []SalesTenderDto
+ * @return error
+ */
 func (repository *SalesRepository) GetTenders(salesId string) ([]SalesDetailTenderEntryData, error) {
 	salesTenderRows, error := repository.db.Query("SELECT "+
 		"te.id, "+
@@ -229,7 +242,7 @@ func (repository *SalesRepository) GetTenders(salesId string) ([]SalesDetailTend
 		"te.amount "+
 		"FROM tender_entries te "+
 		"LEFT JOIN tenders t ON t.id = te.tender_id "+
-		"WHERE transaction_type = 'S' AND te.transaction_id = ? ", salesId)
+		"WHERE transaction_type = '"+TRANSACTION_TYPE_SALES+"' AND te.transaction_id = ? ", salesId)
 
 	if error != nil {
 		return nil, error

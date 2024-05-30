@@ -31,7 +31,28 @@ func (e *SalesDataEncoder) EncodeQuery(query *dto.QueryPayload) string {
 
 	whereClause += dateRangeQueryClause
 
+	if query.LocationId != "" {
+		if whereClause != "" {
+			whereClause += " AND "
+		}
+		whereClause += "s.location_id = " + query.LocationId
+	}
+
 	return whereClause
+}
+
+/**
+ * Encode sort by
+ * @param sortBy string
+ * @param orderBy string
+ * @return string
+ */
+func (e *SalesDataEncoder) EncodeSortBy(sortBy string, orderBy string) string {
+	if sortBy == "" {
+		return "ORDER BY s.sales_date DESC"
+	}
+
+	return "ORDER BY s." + sortBy + " " + orderBy
 }
 
 /**

@@ -9,10 +9,13 @@ import (
 type QueryPayload struct {
 	SearchField string    `json:"search_field"`
 	SearchValue string    `json:"search_value"`
+	LocationId  string    `json:"location_id"`
 	StartDate   time.Time `json:"start_date"`
 	EndDate     time.Time `json:"end_date"`
 	Page        int       `json:"page"`
 	Limit       int       `json:"limit"`
+	SortBy      string    `json:"sort_by"`
+	OrderBy     string    `json:"order_by"`
 }
 
 func NewQueryPayload(params url.Values) *QueryPayload {
