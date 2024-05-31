@@ -58,7 +58,7 @@ func (srv *APIService) Run() {
 	salesRouteHandler := sales.NewRouteHandler(router, srv.database.GetConnection())
 	salesRouteHandler.RegisterRoute()
 
-	handlers := CorsMiddleware(router)
+	handlers := CorsMiddleware(RootPathMiddleware(router))
 
 	address := fmt.Sprintf(":%s", srv.config.Port)
 

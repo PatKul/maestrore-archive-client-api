@@ -65,9 +65,9 @@ func (e *SalesDataEncoder) EncodeSortBy(sortBy string, orderBy string) string {
  */
 func (e *SalesDataEncoder) EncodeSearchValue(searchField string, searchValue string) string {
 	if searchField == "sales_note" {
-		return "s.note LIKE '%" + searchValue + "%'"
+		return "s.note LIKE '%%" + searchValue + "%%'"
 	} else if searchField == "entry_comment" {
-		return "se.comment LIKE '%" + searchValue + "%'"
+		return "se.comment LIKE '%%" + searchValue + "%%'"
 	}
 
 	return ""

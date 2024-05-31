@@ -2,14 +2,21 @@ package location
 
 import (
 	"maestrore/domain/location/data"
+	"maestrore/domain/location/dto"
 )
 
 type LocationService struct {
 	repository *data.LocationRepository
+	encoder    *LocationDtoEncoder
 }
 
 func NewLocationService(repository *data.LocationRepository) *LocationService {
-	return &LocationService{repository: repository}
+	encoder := NewLocationDtoEncoder()
+
+	return &LocationService{
+		repository: repository,
+		encoder:    encoder,
+	}
 }
 
 /**
@@ -17,11 +24,13 @@ func NewLocationService(repository *data.LocationRepository) *LocationService {
  * @return []data.LocationListData
  * @return error
  */
-func (s *LocationService) FindAll() ([]data.LocationListData, error) {
+func (s *LocationService) FindAll() ([]dto.LocationListDto, error) {
 	locations, error := s.repository.FindAll()
 	if error != nil {
 		return nil, error
 	}
 
-	return locations, nil
+	list := s.encoder.EncodeListData(&locations)
+
+	return *list, nil
 }

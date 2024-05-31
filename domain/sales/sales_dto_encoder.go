@@ -22,15 +22,26 @@ func NewSalesDtoEncoder() *SalesDtoEncoder {
 func (e *SalesDtoEncoder) EncodeListData(data *[]data.SalesListData) *[]dto.SalesListDto {
 	var list []dto.SalesListDto = []dto.SalesListDto{}
 	for _, sale := range *data {
+		tillNumber := 0
+		if sale.TillNumber.Valid {
+			tillNumber = int(sale.TillNumber.Int64)
+		}
+
+		netAmount := 0.0
+		if sale.NetAmount.Valid {
+			netAmount = sale.NetAmount.Float64
+		}
+
 		list = append(list, dto.SalesListDto{
 			Id:                    sale.Id,
 			LocationTransactionId: sale.LocationTransactionId,
-			LocationName:          sale.LocationName,
-			TillNumber:            sale.TillNumber,
-			SalesDate:             sale.SalesDate,
-			NetAmount:             sale.NetAmount,
+			LocationName:          sale.LocationName.String,
+			TillNumber:            tillNumber,
+			SalesDate:             string(sale.SalesDate),
+			NetAmount:             netAmount,
 			AmountPaid:            sale.AmountPaid,
 			CommissionDue:         sale.CommissionDue,
+			Note:                  sale.Note.String,
 		})
 	}
 
@@ -57,13 +68,24 @@ func (e *SalesDtoEncoder) EncodeDetailData(sale *data.SalesDetailData) *dto.Sale
 	if sale.Note.Valid {
 		note = sale.Note.String
 	}
+
+	tillNumber := 0
+	if sale.TillNumber.Valid {
+		tillNumber = int(sale.TillNumber.Int64)
+	}
+
+	netAmount := 0.0
+	if sale.NetAmount.Valid {
+		netAmount = sale.NetAmount.Float64
+	}
+
 	return &dto.SalesDetailDto{
 		Id:                    sale.Id,
 		LocationTransactionId: sale.LocationTransactionId,
-		LocationName:          sale.LocationName,
-		TillNumber:            sale.TillNumber,
-		SalesDate:             sale.SalesDate,
-		NetAmount:             sale.NetAmount,
+		LocationName:          sale.LocationName.String,
+		TillNumber:            tillNumber,
+		SalesDate:             string(sale.SalesDate),
+		NetAmount:             netAmount,
 		AmountPaid:            sale.AmountPaid,
 		CommissionDue:         sale.CommissionDue,
 		Note:                  note,

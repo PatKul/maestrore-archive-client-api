@@ -45,6 +45,7 @@ func (r *SalesRepository) Count(query *dto.QueryPayload) (int, error) {
 		"LEFT JOIN locations loc ON loc.id = s.location_id " +
 		"LEFT JOIN sales_entries se ON se.sales_id = s.id " +
 		whereClause)
+
 	error := r.db.QueryRow(sql).Scan(&count)
 
 	if error != nil {
@@ -81,19 +82,18 @@ func (repository *SalesRepository) FindPagedResult(query *dto.QueryPayload) ([]S
 		"s.sales_date,"+
 		"s.consumer_id,"+
 		"s.till_number,"+
-		"s.net_amount,"+
+		"SUM(se.total_sales_price) as net_amount,"+
 		"s.amount_paid,"+
 		"s.commission_due,"+
 		"s.note "+
 		"FROM sales s LEFT JOIN locations loc ON loc.id = s.location_id "+
 		"LEFT JOIN sales_entries se ON se.sales_id = s.id "+
 		whereClause+" "+
+		"GROUP BY s.id, loc.name, s.sales_date, s.consumer_id, s.till_number, s.amount_paid, s.commission_due, s.note "+
 		orderByClause+" "+
 		"LIMIT %s OFFSET %s", limitStr, offsetStr)
 
 	salesRows, error := repository.db.Query(sql)
-
-	fmt.Print(sql)
 
 	if error != nil {
 		return nil, fmt.Errorf("failed to execute query: %s \n sql: %s", error.Error(), sql)

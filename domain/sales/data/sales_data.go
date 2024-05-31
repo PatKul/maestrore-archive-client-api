@@ -2,17 +2,16 @@ package data
 
 import (
 	"database/sql"
-	"time"
 )
 
 type SalesListData struct {
 	Id                    int
 	LocationTransactionId int
-	LocationName          string
+	LocationName          sql.NullString
 	CustomerId            int
-	TillNumber            int
-	SalesDate             time.Time
-	NetAmount             float64
+	TillNumber            sql.NullInt64
+	SalesDate             []uint8
+	NetAmount             sql.NullFloat64
 	AmountPaid            float64
 	CommissionDue         float64
 	Note                  sql.NullString
@@ -21,11 +20,11 @@ type SalesListData struct {
 type SalesDetailData struct {
 	Id                    int
 	LocationTransactionId int
-	LocationName          string
+	LocationName          sql.NullString
 	CustomerId            int
-	TillNumber            int
-	SalesDate             time.Time
-	NetAmount             float64
+	TillNumber            sql.NullInt64
+	SalesDate             []uint8
+	NetAmount             sql.NullFloat64
 	AmountPaid            float64
 	CommissionDue         float64
 	Note                  sql.NullString

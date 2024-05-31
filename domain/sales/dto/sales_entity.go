@@ -30,7 +30,7 @@ func NewQueryPayload(params url.Values) *QueryPayload {
 	}
 
 	page := 1
-	limit := 10
+	limit := 25
 
 	pageStr := params.Get("page")
 	if pageStr != "" {
@@ -47,21 +47,24 @@ func NewQueryPayload(params url.Values) *QueryPayload {
 		SearchValue: params.Get("search_value"),
 		StartDate:   startDate,
 		EndDate:     endDate,
+		LocationId:  params.Get("location_id"),
 		Page:        page,
 		Limit:       limit,
+		SortBy:      params.Get("sort_by"),
+		OrderBy:     params.Get("order_by"),
 	}
 }
 
 type SalesListDto struct {
-	Id                    int       `json:"id"`
-	LocationTransactionId int       `json:"location_transaction_id"`
-	LocationName          string    `json:"location_name"`
-	TillNumber            int       `json:"till_number"`
-	SalesDate             time.Time `json:"sales_date"`
-	NetAmount             float64   `json:"net_amount"`
-	AmountPaid            float64   `json:"amount_paid"`
-	CommissionDue         float64   `json:"commission_due"`
-	Note                  string    `json:"note"`
+	Id                    int     `json:"id"`
+	LocationTransactionId int     `json:"location_transaction_id"`
+	LocationName          string  `json:"location_name"`
+	TillNumber            int     `json:"till_number"`
+	SalesDate             string  `json:"sales_date"`
+	NetAmount             float64 `json:"net_amount"`
+	AmountPaid            float64 `json:"amount_paid"`
+	CommissionDue         float64 `json:"commission_due"`
+	Note                  string  `json:"note"`
 }
 
 type SalesDetailDto struct {
@@ -69,7 +72,7 @@ type SalesDetailDto struct {
 	LocationTransactionId int                         `json:"location_transaction_id"`
 	LocationName          string                      `json:"location_name"`
 	TillNumber            int                         `json:"till_number"`
-	SalesDate             time.Time                   `json:"sales_date"`
+	SalesDate             string                      `json:"sales_date"`
 	NetAmount             float64                     `json:"net_amount"`
 	AmountPaid            float64                     `json:"amount_paid"`
 	CommissionDue         float64                     `json:"commission_due"`
